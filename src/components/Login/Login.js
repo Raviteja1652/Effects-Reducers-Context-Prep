@@ -34,16 +34,21 @@ const Login = (props) => {
   const [emailState, dispatchEmail] = useReducer(emailReducer, {value: '', isValid: null});
   const [passwordState, dispatchPassword] = useReducer(PassReducer, {value: '', isValid: null});
 
+  // useEffect runs too often with previous approach. Even after inputs are valid, entering extra characters trigger useEffect.
+  // With this object destructuring approach entering extra char after validation wont trigger useEffect.
+  const {isValid: emailIsValid} = emailState
+  const {isValid: passwordIsValid} = passwordState
+
   useEffect(() => {
     const identifier = setTimeout(() => {
       setFormIsValid(
-        emailState.value.includes('@') && passwordState.value.trim().length > 6
+        emailIsValid && passwordIsValid
       );
     }, 500);
     return () => {
       clearTimeout(identifier)
     }
-  }, [emailState.value, passwordState.value]);
+  }, [emailIsValid, passwordIsValid]);
 
 
   const emailChangeHandler = (event) => {
